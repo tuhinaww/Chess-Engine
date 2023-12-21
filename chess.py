@@ -86,3 +86,18 @@ class Chess:
             self.en_passant = None if data[3] == '-' else self.board_2_array(data[3])
             return True
         return False
+    
+    def log_move(self, part, cur_cord, next_cord, cur_pos, next_pos, n_part=None):
+        def get_piece_notation():
+            if part == 6 * self.p_move and next_pos[0] - cur_pos[0] == 2:
+                return '0-0' if self.p_move == 1 else '0-0-0'
+            elif part == 1 * self.p_move and n_part:
+                return f'{str(next_cord).lower()}={str(n_part).upper()}'
+            else:
+                p_name = self.parts[abs(part)]
+                move_notation = getattr(Chess, p_name)().notation.upper()
+                if self.board[next_pos[1]][next_pos[0]] != 0 or (next_pos == self.en_passant and (part == 1 or part == -1)):
+                    move_notation += 'x' if move_notation else str(cur_cord)[0] + 'x'
+                return move_notation + str(next_cord).lower()
+
+        self.log.append(get_piece_notation())
