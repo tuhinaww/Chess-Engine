@@ -67,3 +67,22 @@ class Chess:
                            'q' if self.castling[3] == 1 else ''])
         result += f' -' if sum(self.castling) == 0 else f' {self.columns[self.en_passant[0]]}{self.rows[self.en_passant[1]]}' if self.en_passant else f' -'
         return result
+    
+    def load_EPD(self, EPD):
+        data = EPD.split(' ')
+        if len(data) == 4:
+            for x, rank in enumerate(data[0].split('/')):
+                y = 0
+                for p in rank:
+                    if p.isdigit():
+                        for _ in range(int(p)):
+                            self.board[x][y] = 0
+                            y += 1
+                    else:
+                        self.board[x][y] = self.piece_notation[p.lower()] * (-1) if p.islower() else self.piece_notation[p.lower()]
+                        y += 1
+            self.p_move = 1 if data[1] == 'w' else -1
+            self.castling = [1 if letter in data[2] else 0 for letter in 'KQkq']
+            self.en_passant = None if data[3] == '-' else self.board_2_array(data[3])
+            return True
+        return False
