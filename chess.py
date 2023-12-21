@@ -37,3 +37,33 @@ class Chess:
         if len(x) == 1 and x.lower() in self.columns and y in self.rows:
             return self.columns.index(x.lower()), self.rows.index(y)
         return None
+    
+    def EPD_hash(self):
+        def piece_to_str(piece):
+            if piece == 0:
+                return ''
+            notation = getattr(Chess, self.piece_names[abs(piece)])().notation
+            return notation.lower() if piece < 0 else notation.upper() or 'p' if notation == '' else notation
+
+        result = ''
+        for row in self.board:
+            empty_count = 0
+            for square in row:
+                if square == 0:
+                    empty_count += 1
+                else:
+                    if empty_count > 0:
+                        result += str(empty_count)
+                        empty_count = 0
+                    result += piece_to_str(square)
+            if empty_count > 0:
+                result += str(empty_count)
+            result += '/' if result.count('/') < 7 else ''
+
+        result += ' w ' if self.p_move == -1 else ' b '
+        result += ''.join(['K' if self.castling[0] == 1 else '',
+                           'Q' if self.castling[1] == 1 else '',
+                           'k' if self.castling[2] == 1 else '',
+                           'q' if self.castling[3] == 1 else ''])
+        result += f' -' if sum(self.castling) == 0 else f' {self.columns[self.en_passant[0]]}{self.rows[self.en_passant[1]]}' if self.en_passant else f' -'
+        return result
