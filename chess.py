@@ -24,3 +24,10 @@ class Chess:
             result += f'{8 - i}|{" ".join(self.get_piece_notation(piece) for piece in row)}|{8 - i}\n'
         result += '  ----------------\n  a b c d e f g h\n'
         print(result)
+
+    def get_piece_notation(self, piece):
+        if piece == 0:
+            return '.'
+        piece_name = self.piece_names[abs(piece)]
+        notation = getattr(Chess, piece_name)().notation
+        return notation.lower() if piece < 0 else notation.upper() or 'p' if notation == '' else notation
