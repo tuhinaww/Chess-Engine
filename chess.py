@@ -78,7 +78,7 @@ class Chess:
                         y += 1
             self.p_move = 1 if data[1] == 'w' else -1
             self.castling = [1 if letter in data[2] else 0 for letter in 'KQkq']
-            self.en_passant = None if data[3] == '-' else self.board_2_array(data[3])]
+            self.en_passant = None if data[3] == '-' else self.board_2_array(data[3])
             return True
         return False
 
