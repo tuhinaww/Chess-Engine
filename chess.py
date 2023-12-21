@@ -31,3 +31,9 @@ class Chess:
         piece_name = self.piece_names[abs(piece)]
         notation = getattr(Chess, piece_name)().notation
         return notation.lower() if piece < 0 else notation.upper() or 'p' if notation == '' else notation
+    
+    def board_2_array(self, coordinate):
+        x, y = coordinate[0], coordinate[1]
+        if len(x) == 1 and x.lower() in self.columns and y in self.rows:
+            return self.columns.index(x.lower()), self.rows.index(y)
+        return None
