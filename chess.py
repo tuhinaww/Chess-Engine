@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class Chess:
     def __init__(self, EPD='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -'):
         self.columns = 'abcdefgh'
@@ -96,3 +99,35 @@ class Chess:
                 return move_notation + str(next_cord).lower()
 
         self.log.append(get_piece_notation())
+
+    def move(self, cur_pos, next_pos):
+        cp, np = self.board_2_array(cur_pos), self.board_2_array(next_pos)
+        
+        if self.valid_move(cp, np):
+            part = self.board[cp[1]][cp[0]]
+            
+            if np == self.en_passant and abs(part) == 1:
+                self.board[self.en_passant[1] - self.p_move][-self.en_passant[0]] = 0
+            
+            self.log_move(part, cur_pos, next_pos, cp, np)
+            self.prev_move = deepcopy(self.board)
+            
+            if part in {1, -1} and np == self.en_passant:
+                self.en_passant = (np[0], np[1] + 1) if part == 1 else (np[0], np[1] - 1)
+            elif part == 6 * self.p_move and np[0] - cp[0] in {2, -2}:
+                d = (np[0] - cp[0]) // 2
+                self.board[np[1]][np[0] - d] = 4 * self.p_move
+                self.board[np[1]][np[0] + d] = 0
+            else:
+                self.en_passant = None
+            
+            self.castling[::2] = [0] * 2 if part == 6 * self.p_move else self.castling[::2]
+            index = (0 if cp[0] == 0 else 2) if part == 4 * self.p_move else (1 if cp[0] == 0 else 3)
+            self.castling[index] = 0 if cp[0] == 0 else self.castling[index]
+            
+            self.board[cp[1]][cp[0]], self.board[np[1]][np[0]] = 0, part
+            hash_key = self.EPD_hash()
+            self.EPD_table[hash_key] = self.EPD_table.get(hash_key, 0) + 1
+            return True
+        
+        return False
