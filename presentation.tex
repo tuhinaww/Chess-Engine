@@ -1,0 +1,82 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\definecolor{blue}{RGB}{0,0,255}
+
+\title{Chess Engine}
+
+\author{Tuhina, Devanshee, Sanjhanna, Harshitha}
+\date{December 21, 2023}
+
+% Customize the color of the references
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry location}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=blue} % Change to blue
+
+% Remove names from the footer
+\setbeamertemplate{footline}{}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{Introduction}
+    \begin{itemize}
+        \item Chess program development: code each piece.
+        \item Employing MCTS with neural network model.
+        \item Decoder-only transformers: reinforcement learning.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Tech Stack}
+    \begin{itemize}
+        \item MCTS Algorithm
+        \item Transformers
+        \item Tkinter
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Approach}
+    \begin{itemize}
+        \item \textbf{Phase 1}
+        \begin{itemize}
+            \item[--] Chess piece implementation
+        \end{itemize}
+        \item \textbf{Phase 2}
+        \begin{itemize}
+            \item[--] MCTS and transformer integration
+        \end{itemize}
+        \item \textbf{Phase 3}
+        \begin{itemize}
+            \item[--] Neural network training
+        \end{itemize}
+        \item \textbf{Phase 4}
+        \begin{itemize}
+            \item[--] GUI
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{References}
+    \begin{thebibliography}{1}
+        \bibitem{deepmind_alphazero}
+        DeepMind, "AlphaZero: Shedding new light on chess, shogi, and Go," \url{https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/}.
+        \bibitem{investopedia_mc_simulation}
+        Investopedia, "Monte Carlo Simulation: History, How it Works, and 4 Key Steps," \url{https://www.investopedia.com/terms/m/montecarlosimulation.asp}.
+        \bibitem{jalammar_transformer}
+        Jay Alammar, "Illustrated Transformer," \url{https://jalammar.github.io/illustrated-transformer/}.
+    \end{thebibliography}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \Huge
+    Thank You!
+  \end{center}
+\end{frame}
+
+\end{document}
