@@ -114,8 +114,7 @@ class Chess:
                 self.en_passant = (np[0], np[1] + 1) if part == 1 else (np[0], np[1] - 1)
             elif part == 6 * self.p_move and np[0] - cp[0] in {2, -2}:
                 d = (np[0] - cp[0]) // 2
-                self.board[np[1]][np[0] - d] = 4 * self.p_move
-                self.board[np[1]][np[0] + d] = 0
+                self.board[np[1]][np[0] - d], self.board[np[1]][np[0] + d] = 4 * self.p_move, 0
             else:
                 self.en_passant = None
             
@@ -124,15 +123,15 @@ class Chess:
             self.castling[index] = 0 if cp[0] == 0 else self.castling[index]
             
             self.board[cp[1]][cp[0]], self.board[np[1]][np[0]] = 0, part
-            hash_key = self.EPD_hash()
-            self.EPD_table[hash_key] = self.EPD_table.get(hash_key, 0) + 1
+            self.EPD_table[self.EPD_hash()] = self.EPD_table.get(self.EPD_hash(), 0) + 1
             return True
         
         return False
-    
+
     def valid_move(self, cur_pos, next_pos):
-        if cur_pos is not None and next_pos is not None:
+        if cur_pos and next_pos:
             part = self.board[cur_pos[1]][cur_pos[0]]
+            
             if part * self.p_move > 0 and part:
                 p_name = self.parts[abs(part)]
                 v_moves = getattr(Chess, p_name).movement(self, self.p_move, cur_pos, capture=True)
@@ -141,6 +140,7 @@ class Chess:
                     v_moves = [m for m in v_moves if cur_pos in self.c_escape and m in self.c_escape[cur_pos]]
                 
                 return next_pos in v_moves
+        
         return False
 
     
