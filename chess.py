@@ -304,3 +304,25 @@ class Chess:
         ]
         
         return any(condition for condition in draw_conditions)
+    
+    def is_end(self):
+        w_king = any(self.board[y][x] == self.King().value for y, row in enumerate(self.board) for x, piece in enumerate(row))
+        b_king = any(self.board[y][x] == self.King().value * (-1) for y, row in enumerate(self.board) for x, piece in enumerate(row))
+
+        if not w_king and not b_king:
+            return [0, 1, 0]
+        elif not w_king:
+            return [0, 0, 1]
+        elif not b_king:
+            return [1, 0, 0]
+
+        moves = self.possible_board_moves(capture=True)
+        check_mate = self.is_checkmate(moves)
+        hash_key = self.EPD_hash()
+
+        if sum(check_mate) > 0:
+            return check_mate
+        elif self.is_draw(moves, hash_key):
+            return [0, 1, 0]
+
+        return [0, 0, 0]
