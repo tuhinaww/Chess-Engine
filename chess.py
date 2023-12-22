@@ -143,4 +143,20 @@ class Chess:
         
         return False
 
-    
+    def possible_board_moves(self, capture=True):
+        moves = {}
+        for y, row in enumerate(self.board):
+            for x, part in enumerate(row):
+                if part:
+                    p_name = self.parts[abs(part)]
+                    p_colour = 1 if part > 0 else -1
+                    v_moves = getattr(Chess, p_name).movement(self, p_colour, [x, y], capture=capture)
+                    
+                    if len(self.log) > 0 and '+' in self.log[-1]:
+                        v_moves = [m for m in v_moves if (x, y) in self.c_escape and m in self.c_escape[(x, y)]]
+                    
+                    pos = f'{str(self.x[x]).upper() if p_colour > 0 else str(self.x[x]).lower()}{self.y[y]}'
+                    moves[pos] = v_moves
+            
+        return moves
+
