@@ -226,5 +226,25 @@ class Chess:
             return True
     
         return False
+    
+    def fifty_move_rule(self, moves, choice=None):
+        if len(self.log) <= 100:
+            return False
+        
+        recent_moves = self.log[-100:]
+        if any('x' in move or move[0].islower() for move in recent_moves):
+            return False
+        
+        if choice is None:
+            while True:
+                choice = input('Fifty move rule - do you want to claim a draw? [Y/N]').lower()
+                if choice in {'y', 'yes', '1'}:
+                    return True
+                elif choice in {'n', 'no', '0'}:
+                    return False
+                print('Unsupported answer')
+        
+        return choice in {'y', 'yes', '1'}
+
 
 
