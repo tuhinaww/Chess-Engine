@@ -326,3 +326,16 @@ class Chess:
             return [0, 1, 0]
 
         return [0, 0, 0]
+    
+    def check_state(self, hash):
+        if len(self.log) > 0:
+            last_move = self.log[-1]
+            if (self.p_move == 1 and ('8' in last_move and not last_move[0].isupper() or last_move[0] == 'P')) \
+                or (self.p_move == -1 and ('1' in last_move and not last_move[0].isupper() or last_move[0] == 'P')):
+                return 'PP'
+
+        if hash in self.EPD_table and self.EPD_table[hash] == 3:
+            return '3F' 
+        elif len(self.log) > 100 and not any('x' in m or m[0].islower() for m in self.log[-100:]):
+            return '50M'  
+        return None
