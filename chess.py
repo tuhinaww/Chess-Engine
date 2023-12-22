@@ -292,4 +292,15 @@ class Chess:
         if False not in [False for p, a in moves.items() if len(a) > 0 and ((self.p_move == 1 and str(p[0]).isupper()) or (self.p_move == -1 and str(p[0]).islower()))]:
             return True
         return False
-
+    
+    def is_draw(self, moves, hash):
+        draw_conditions = [
+            self.is_stalemate(moves),
+            self.is_dead_position(moves),
+            self.seventy_five_move_rule(moves),
+            self.five_fold_rule(hash),
+            self.fifty_move_rule(moves),
+            self.three_fold_rule(hash)
+        ]
+        
+        return any(condition for condition in draw_conditions)
