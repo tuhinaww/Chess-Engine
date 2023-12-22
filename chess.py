@@ -273,7 +273,21 @@ class Chess:
                     print('Unsupported answer')
         return False
     
-    
+    def is_dead_position(self, moves):
+        pieces = [x for y in self.board for x in y if x != 0]
+        unique_pieces = set(pieces)
+        
+        if len(unique_pieces) > 4:
+            return False
+        
+        if len(unique_pieces) == 2 and {-6, 6} in {unique_pieces}:
+            return True
+        
+        if len(unique_pieces) == 3 and {-6, 3, 6} in {unique_pieces, {-6, -3, 6}, {-6, 2, 6}, {-6, -2, 6}}:
+            return True
+        
+        return False
+
 
 
 
