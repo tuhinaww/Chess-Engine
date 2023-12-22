@@ -1,6 +1,4 @@
 from copy import deepcopy
-
-
 class Chess:
     def __init__(self, EPD='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -'):
         self.columns = 'abcdefgh'
@@ -131,3 +129,18 @@ class Chess:
             return True
         
         return False
+    
+    def valid_move(self, cur_pos, next_pos):
+        if cur_pos is not None and next_pos is not None:
+            part = self.board[cur_pos[1]][cur_pos[0]]
+            if part * self.p_move > 0 and part:
+                p_name = self.parts[abs(part)]
+                v_moves = getattr(Chess, p_name).movement(self, self.p_move, cur_pos, capture=True)
+                
+                if len(self.log) > 0 and '+' in self.log[-1]:
+                    v_moves = [m for m in v_moves if cur_pos in self.c_escape and m in self.c_escape[cur_pos]]
+                
+                return next_pos in v_moves
+        return False
+
+    
