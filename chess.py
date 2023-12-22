@@ -245,6 +245,15 @@ class Chess:
                 print('Unsupported answer')
         
         return choice in {'y', 'yes', '1'}
+    
+    def seventy_five_move_rule(self, moves):
+        if len(self.log) > 150:
+            for m in self.log[-150:]:
+                if 'x' in m or m[0].islower():
+                    return False
+        else:
+            return False
+        return True
 
 
 
