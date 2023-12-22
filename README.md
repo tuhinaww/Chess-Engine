@@ -56,7 +56,7 @@ The goal of this project is to create a robust chess-playing program employing M
 ## To-Do List:
 
 - [ ] Implement pieces: Pawns, Knights, Bishops, Rooks, King, Queen
-- [ ] Define Class Structures: Piece classes, Display, Chess Board, Rule implementations
+- [x] Define Class Structures: Piece classes, Display, Chess Board, Rule implementations
 - [ ] Integrate MCTS: End-game checks, Neural Network integration
 - [ ] Develop Transformer Model: Decoder architecture, Attention Mechanism, Tokenization
 - [ ] Output and Learning Setup: Model output configuration, Reinforcement Learning implementation
