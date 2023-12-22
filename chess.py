@@ -260,6 +260,20 @@ class Chess:
             if self.EPD_table[hash] >= 5:
                 return True
         return False
+    
+    def three_fold_rule(self, hash):
+        if hash in self.EPD_table:
+            if self.EPD_table[hash] == 3:
+                while True:
+                    choice = input('Three fold rule - do you want to claim a draw? [Y/N]')
+                    if choice.lower() == 'y' or choice.lower() == 'yes' or choice.lower() == '1':
+                        return True
+                    elif choice.lower() == 'n' or choice.lower() == 'no' or choice.lower() == '0':
+                        return False
+                    print('Unsupported answer')
+        return False
+    
+    
 
 
 
