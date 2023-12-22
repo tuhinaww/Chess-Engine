@@ -160,3 +160,45 @@ class Chess:
             
         return moves
 
+    def is_checkmate(self, moves):
+        self.c_escape = {}
+        k_pos, p_blocks, u_moves = (), [], {}
+
+        for p, a in moves.items():
+            pos = self.board_2_array(p)
+            if (str(p[0]).isupper() and self.p_move == -1) or (str(p[0]).islower() and self.p_move == 1):
+                if self.board[pos[1]][pos[0]] == self.King().value * (-self.p_move):
+                    k_pos = (pos, a)
+                else:
+                    p_blocks.extend([(pos, m) for m in a if (pos, m) not in p_blocks])
+            else:
+                u_moves.setdefault(pos, []).extend(a)
+
+        p_moves = [m for a in u_moves.values() for m in a]
+        if not k_pos:
+            for y, row in enumerate(self.board):
+                if self.King().value * (-self.p_move) in row:
+                    k_pos = ((row.index(self.King().value*(-self.p_move)), y), [])
+                    break
+
+        if k_pos and k_pos[0] not in p_moves:
+            return [0, 0, 0]
+        if k_pos and k_pos[0] in p_moves:
+            for m in p_blocks + k_pos[1]:
+                i_game = deepcopy(self)
+                i_game.p_move *= -1
+                i_game.move(f'{self.x[m[0][0]]}{self.y[m[0][1]]}', f'{self.x[m[1][0]]}{self.y[m[1][1]]}') 
+                i_game.p_move *= -1
+                i_moves = i_game.possible_board_moves(capture=True)
+
+                if not any(k_pos[0] in i_moves[k] for k in i_moves):
+                    self.c_escape.setdefault(m[0], []).append(m[1])
+
+            if self.c_escape:
+                self.log[-1] += '+'
+                return [0, 0, 0]
+            winner = 1 if self.p_move == 1 else 0
+            self.log[-1] += '#' 
+            return [winner, 0, 1 - winner]
+        return [1, 0, 0] if self.p_move == 1 else [0, 0, 1]
+
