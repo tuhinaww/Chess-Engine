@@ -254,6 +254,12 @@ class Chess:
         else:
             return False
         return True
+    
+    def five_fold_rule(self, hash):
+        if hash in self.EPD_table:
+            if self.EPD_table[hash] >= 5:
+                return True
+        return False
 
 
 
