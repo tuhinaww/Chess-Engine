@@ -201,4 +201,30 @@ class Chess:
             self.log[-1] += '#' 
             return [winner, 0, 1 - winner]
         return [1, 0, 0] if self.p_move == 1 else [0, 0, 1]
+    
+    def pawn_promotion(self, n_part=None):
+        valid_parts = {'q': 'Queen', 'b': 'Bishop', 'n': 'Knight', 'r': 'Rook'}
+        
+        if n_part is None:
+            while True:
+                n_part = input(
+                    '\nPawn Promotion - What piece would you like to switch to:\n\n*Queen[q]\n*Bishop[b]\n*Knight[n]\n*Rook[r]\n'
+                ).lower()
+                if n_part not in valid_parts:
+                    print('\nInvalid Option')
+                else:
+                    break
+
+        n_part = valid_parts[n_part]
+
+        pos = self.board_2_array(self.log[-1].replace('+', '').split('x')[-1])
+        
+        if pos is not None:
+            part = self.notation[n_part.lower()] * self.p_move
+            self.board[pos[1]][pos[0]] = part
+            self.log[-1] += f'={n_part.upper()}'
+            return True
+    
+        return False
+
 
