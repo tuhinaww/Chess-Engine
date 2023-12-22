@@ -287,7 +287,9 @@ class Chess:
             return True
         
         return False
-
-
-
+    
+    def is_stalemate(self, moves):
+        if False not in [False for p, a in moves.items() if len(a) > 0 and ((self.p_move == 1 and str(p[0]).isupper()) or (self.p_move == -1 and str(p[0]).islower()))]:
+            return True
+        return False
 
