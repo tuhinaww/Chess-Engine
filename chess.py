@@ -339,3 +339,28 @@ class Chess:
         elif len(self.log) > 100 and not any('x' in m or m[0].islower() for m in self.log[-100:]):
             return '50M'  
         return None
+    
+    class King:
+        def __init__(self):
+            self.value = 6 
+            self.notation = 'K'
+        def movement(game, player, pos, capture=True):
+            result = []
+            offsets = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]
+
+            for offset in offsets:
+                new_pos = (pos[0] + offset[0], pos[1] + offset[1])
+                if 0 <= new_pos[0] <= 7 and 0 <= new_pos[1] <= 7:
+                    piece_at_new_pos = game.board[new_pos[1]][new_pos[0]]
+                    if piece_at_new_pos * player <= 0 or piece_at_new_pos == 0:
+                        result.append(new_pos)
+
+            if (pos == (4, 7) or pos == (4, 0)) and game.board[pos[1]][pos[0] + 1] == 0 and game.board[pos[1]][pos[0] + 2] == 0 and ((game.castling[0] == 1 and game.p_move == 1) or (game.castling[2] == 1 and game.p_move == -1)):
+                result.append((pos[0] + 2, pos[1]))
+
+            if (pos == (4, 7) or pos == (4, 0)) and game.board[pos[1]][pos[0] - 1] == 0 and game.board[pos[1]][pos[0] - 2] == 0 and ((game.castling[1] == 1 and game.p_move == 1) or (game.castling[3] == 1 and game.p_move == -1)):
+                result.append((pos[0] - 2, pos[1]))
+
+            return result
+        
+    
