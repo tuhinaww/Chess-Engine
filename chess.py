@@ -459,5 +459,32 @@ class Chess:
             
             return valid_moves
 
+    class Pawn:
+        def __init__(self):
+            self.value = 1
+            self.notation = ''
+
+        def movement(self, game, player, pos, capture=True):
+            result = []
+            init = 1 if player < 0 else 6
+            amt = 1 if pos[1] != init else 2
+
+            for i in range(amt):
+                new_pos = (pos[0], pos[1] - ((i + 1) * player))
+                if 0 <= new_pos[1] <= 7 and game.board[new_pos[1]][new_pos[0]] == 0:
+                    result.append(new_pos)
+                else:
+                    break
+
+            directions = [(1, -1), (-1, -1)]
+            for direction in directions:
+                new_pos = (pos[0] + direction[0], pos[1] - player)
+                if 0 <= new_pos[0] <= 7 and 0 <= new_pos[1] <= 7:
+                    if game.board[new_pos[1]][new_pos[0]] * player < 0 or new_pos == game.en_passant:
+                        result.append(new_pos)
+
+            return result
         
+    
+
     
