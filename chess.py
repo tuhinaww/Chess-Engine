@@ -389,6 +389,34 @@ class Chess:
                         break
                         
             return result
+        
+    class Rook:
+        def __init__(self):
+                    self.value = 3
+                    self.notation = 'B'
+        def movement(game, player, pos, capture=True):
+            result = []
+            directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+            
+            for direction in directions:
+                for i in range(1, 8):
+                    new_x, new_y = pos[0] + direction[0] * i, pos[1] + direction[1] * i
+                    
+                    if not (0 <= new_x <= 7 and 0 <= new_y <= 7):
+                        break
+                    
+                    piece = game.board[new_y][new_x]
+                    if piece * player >= 0:
+                        if piece != 0:
+                            break
+                        result.append((new_x, new_y))
+                    else:
+                        if capture:
+                            result.append((new_x, new_y))
+                        break
+                    
+            return result
+
 
         
     
