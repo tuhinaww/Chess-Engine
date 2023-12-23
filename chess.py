@@ -438,5 +438,26 @@ class Chess:
                         else:
                             break
                 return result
+            
+    class Knight:
+        def __init__(self):
+            self.value = 2
+            self.notation = 'N'
+
+        def movement(self, game, player, pos, capture=True):
+            moves = [
+                (pos[0] + 1, pos[1] + 2), (pos[0] + 2, pos[1] + 1),
+                (pos[0] + 2, pos[1] - 1), (pos[0] + 1, pos[1] - 2),
+                (pos[0] - 1, pos[1] - 2), (pos[0] - 2, pos[1] - 1),
+                (pos[0] - 2, pos[1] + 1), (pos[0] - 1, pos[1] + 2)
+            ]
+            
+            valid_moves = [
+                move for move in moves if 0 <= move[0] <= 7 and 0 <= move[1] <= 7
+                and (game.board[move[1]][move[0]] * player <= 0 or game.board[move[1]][move[0]] == 0)
+            ]
+            
+            return valid_moves
+
         
     
