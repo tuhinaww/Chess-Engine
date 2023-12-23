@@ -363,4 +363,32 @@ class Chess:
 
             return result
         
+    class Queen:
+        def __init__(self):
+            self.value = 5
+            self.notation = 'Q'
+        def movement(game, player, pos, capture=True):
+            result = []
+            directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1)]
+            
+            for direction in directions:
+                for c in range(1, 8):
+                    x, y = pos[0] + direction[0] * c, pos[1] + direction[1] * c
+                    
+                    if 0 <= x <= 7 and 0 <= y <= 7:
+                        piece = game.board[y][x]
+                        
+                        if piece * player < 0 or piece == 0:
+                            result.append((x, y))
+                            
+                            if capture and piece * player < 0:
+                                break
+                        else:
+                            break
+                    else:
+                        break
+                        
+            return result
+
+        
     
