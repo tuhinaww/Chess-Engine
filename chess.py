@@ -417,6 +417,26 @@ class Chess:
                     
             return result
 
+    class Bishop:
+        def __init__(self):
+            self.value = 3
+            self.notation = 'B' 
+            def movement(game, player, pos, capture=True):
+                result = []
 
+                directions = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
+                for dx, dy in directions:
+                    for c in range(1, 8):
+                        new_x, new_y = pos[0] + c * dx, pos[1] + c * dy
+                        if 0 <= new_x <= 7 and 0 <= new_y <= 7:
+                            if game.board[new_y][new_x] * player < 0 or game.board[new_y][new_x] == 0:
+                                result.append((new_x, new_y))
+                                if game.board[new_y][new_x] * player < 0 and capture:
+                                    break
+                            else:
+                                break
+                        else:
+                            break
+                return result
         
     
