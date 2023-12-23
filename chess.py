@@ -452,13 +452,12 @@ class Chess:
                 (pos[0] - 2, pos[1] + 1), (pos[0] - 1, pos[1] + 2)
             ]
             
-            valid_moves = [
+            result = [
                 move for move in moves if 0 <= move[0] <= 7 and 0 <= move[1] <= 7
                 and (game.board[move[1]][move[0]] * player <= 0 or game.board[move[1]][move[0]] == 0)
             ]
             
-            return valid_moves
-
+            return result
     class Pawn:
         def __init__(self):
             self.value = 1
@@ -485,6 +484,30 @@ class Chess:
 
             return result
         
-    
+if __name__ == '__main__':
+    chess_game = Chess(EPD='1b4k1/Q7/p2np1/P1P2p2/1P3P2/1R5R/q6P/5rK1 b - -')
+
+    while True:
+        print(f"\n{'Whites' if chess_game.p_move == 1 else 'Blacks'} Turn [{'UPPER' if chess_game.p_move == 1 else 'LOWER'} CASE]\n")
+        chess_game.display()
+        
+        cur, next_move = input('What piece do you want to move?\n'), input('Where do you want to move the piece to?\n')
+        
+        if not chess_game.move(cur, next_move):
+            print('Invalid move' if len(chess_game.log) == 0 or '+' not in chess_game.log[-1] else 'Invalid move, you are in check')
+        else:
+            state = chess_game.is_end()
+            if sum(state) > 0:
+                print('\n*********************\n      GAME OVER\n*********************\n')
+                chess_game.display()
+                print('Game Log:\n---------\n')
+                print(f'INITIAL POSITION = {chess_game.init_pos}')
+                print(f'MOVES = {chess_game.log}')
+                print('\nGame Result:\n------------\n')
+                print('BLACK WINS\n' if state == [0, 0, 1] else 'WHITE WINS\n' if state == [1, 0, 0] else 'TIE GAME\n')
+                break
+
+            chess_game.p_move *= -1
+
 
     
