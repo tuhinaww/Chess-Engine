@@ -120,9 +120,7 @@ root = TreeNode(board)
 
 print(len(root.nonVisitedLegalMoves))
 
-for i in range(0,5000):
-    if(i%10 == 0):
-        print(i)
+for i in range(0,500):
     if(i%100 == 0):
         for move, child in root.visitedMovesAndNodes:
             print("move: "+str(move)+" "+str(child.M)+ ", "+str(child.V))
@@ -137,5 +135,3 @@ for i in range(0,5000):
 print(root.M)
 print(root.V)
 
-for move, child in root.visitedMovesAndNodes:
-    print("move: "+str(move)+" "+str(child.M)+ ", "+str(child.V))
