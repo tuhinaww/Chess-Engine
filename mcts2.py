@@ -1,10 +1,11 @@
 import random
 import math
 from copy import deepcopy
-from abc import Chess  # assuming your Chess class is in a file named abc.py
+from chess import Chess  
 
 PLAYER = 1
 OPPONENT = -1
+MAX_MOVES = 100  #Auto-tie rule
 
 class TreeNode():
 
@@ -55,10 +56,12 @@ def expand(node):
 
 def simulate(node):
     board = deepcopy(node.board)
-    while board.is_end() == [0, 0, 0]:
+    move_count = 0
+    while board.is_end() == [0, 0, 0] and move_count < MAX_MOVES:
         legal_moves = board.possible_board_moves(capture=True)
         move = random.choice(list(legal_moves.keys()))
         board.move(move[0], move[1])
+        move_count += 1
     
     outcome = board.is_end()
     if outcome[0] == 1:
@@ -73,16 +76,12 @@ def backpropagate(node, payout):
     node.V += 1
     if node.parent is not None:
         return backpropagate(node.parent, payout)
-
-# Example usage:
-
-# Initialize your Chess game
+#Main
 game = Chess()
 
-# Create the root node of the MCTS tree
+
 root = TreeNode(game)
 
-# Run MCTS for a certain number of iterations (e.g., 1000)
 for _ in range(1000):
     # Selection
     selected_node = select(root)
@@ -90,8 +89,6 @@ for _ in range(1000):
     # Expansion
     if not selected_node.isMCTSLeafNode():
         selected_node = expand(selected_node)
-
-    # Simulation
     simulation_result = simulate(selected_node)
 
     # Backpropagation
