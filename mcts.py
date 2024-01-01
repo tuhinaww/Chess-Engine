@@ -1,11 +1,11 @@
 import random
-import chess
 import math
+from copy import deepcopy
+from chess import Chess  
 
-random.seed(42)
-
-PLAYER = chess.WHITE
-OPPONENT = chess.BLACK
+PLAYER = 1
+OPPONENT = -1
+MAX_MOVES = 100  #Auto-tie rule
 
 class TreeNode():
 
@@ -16,7 +16,7 @@ class TreeNode():
         self.nonVisitedLegalMoves = []
         self.board = board
         self.parent = None
-        for m in self.board.legal_moves:
+        for m in self.board.possible_board_moves(capture=True):
             self.nonVisitedLegalMoves.append(m)
 
     def isMCTSLeafNode(self):
@@ -26,112 +26,75 @@ class TreeNode():
         return len(self.nonVisitedLegalMoves) == 0 and len(self.visitedMovesAndNodes) == 0
 
 def uctValue(node, parent):
-    val = (node.M/node.V) + 1.4142 * math.sqrt(math.log(parent.V) / node.V)
-    #print(val)
+    val = (node.M / node.V) + 1.4142 * math.sqrt(math.log(parent.V) / node.V)
     return val
 
 def select(node):
-    if(node.isMCTSLeafNode() or node.isTerminalNode()):
+    if node.isMCTSLeafNode() or node.isTerminalNode():
         return node
     else:
-        #print(node.board)
-        #print(node.visitedMovesAndNodes)
-        #print(node.nonVisitedLegalMoves)
         maxUctChild = None
         maxUctValue = -1000000.
         for move, child in node.visitedMovesAndNodes:
             uctValChild = uctValue(child, node)
-            if(uctValChild > maxUctValue):
+            if uctValChild > maxUctValue:
                 maxUctChild = child
                 maxUctValue = uctValChild
-        if(maxUctChild == None):
-            raise ValueError("could not identify child with best uct value")
+        if maxUctChild is None:
+            raise ValueError("Could not identify child with the best UCT value")
         else:
             return select(maxUctChild)
 
 def expand(node):
-    moveToExpand = node.nonVisitedLegalMoves.pop()
-    board = node.board.copy()
-    board.push(moveToExpand)
-    childNode = TreeNode(board)
+    moveToExpand = random.choice(node.nonVisitedLegalMoves)
+    new_board = deepcopy(node.board)
+    new_board.move(moveToExpand[0], moveToExpand[1])
+    childNode = TreeNode(new_board)
     childNode.parent = node
     node.visitedMovesAndNodes.append((moveToExpand, childNode))
     return childNode
 
 def simulate(node):
-    board = node.board.copy()
-    while(board.outcome(claim_draw = True) == None):
-        ls = []
-        for m in board.legal_moves:
-            ls.append(m)
-        move = random.choice(ls)
-        board.push(move)
-    #print("---------------start-----------")
-    #print(board)
-    payout = 0.5
-    o = board.outcome(claim_draw = True)
-    #print("winner: " + str(o.winner))
-    #print()
-    if(o.winner == PLAYER):
-        payout = 1
-    if(o.winner == OPPONENT):
-        payout = 0.5
-    if(o.winner == None):
-        payout = 0
-
-    return payout
+    board = deepcopy(node.board)
+    move_count = 0
+    while board.is_end() == [0, 0, 0] and move_count < MAX_MOVES:
+        legal_moves = board.possible_board_moves(capture=True)
+        move = random.choice(list(legal_moves.keys()))
+        board.move(move[0], move[1])
+        move_count += 1
+    
+    outcome = board.is_end()
+    if outcome[0] == 1:
+        return 1.0  # Player wins
+    elif outcome[2] == 1:
+        return 0.0  # Opponent wins
+    else:
+        return 0.5  # Draw
 
 def backpropagate(node, payout):
-    #node.M = ((node.M * node.V) + payout) / (node.V + 1)
-    node.M = node.M + payout
-    node.V = node.V + 1
-    # not at the root node yet
-    if(node.parent != None):
+    node.M += payout
+    node.V += 1
+    if node.parent is not None:
         return backpropagate(node.parent, payout)
+#Main
+game = Chess()
 
 
-import chess
+root = TreeNode(game)
 
-board = chess.Board()
+for _ in range(1000):
+    # Selection
+    selected_node = select(root)
 
-"""
-board.push_uci("e2e4")
-board.push_uci("e7e5")
-board.push_uci("f1c4")
-board.push_uci("d7d6")
-board.push_uci("d1h5")
-board.push_uci("g8f6")
-"""
+    # Expansion
+    if not selected_node.isMCTSLeafNode():
+        selected_node = expand(selected_node)
+    simulation_result = simulate(selected_node)
 
-board.push_uci("e2e4")
-board.push_uci("e7e6")
-board.push_uci("d2d4")
-board.push_uci("d7d5")
-board.push_uci("b1c3")
-board.push_uci("g8f6")
-board.push_uci("e4e5")
-board.push_uci("f6d7")
-board.push_uci("g1f3")
-board.push_uci("f8b4")
-board.push_uci("f1d3")
-board.push_uci("e8g8")
+    # Backpropagation
+    backpropagate(selected_node, simulation_result)
 
-root = TreeNode(board)
+# Choose the best move based on the MCTS results
+best_move = max(root.visitedMovesAndNodes, key=lambda x: x[1].V)[0]
 
-print(len(root.nonVisitedLegalMoves))
-
-for i in range(0,500):
-    if(i%100 == 0):
-        for move, child in root.visitedMovesAndNodes:
-            print("move: "+str(move)+" "+str(child.M)+ ", "+str(child.V))
-    node = select(root)
-    # if the selected node is a terminal, we cannot expand
-    # any child node. in this case, count this as a win/draw/loss
-    if(not node.isTerminalNode()):
-        node = expand(node)
-    payout = simulate(node)
-    backpropagate(node, payout)
-
-print(root.M)
-print(root.V)
-
+print("Best Move:", best_move)
