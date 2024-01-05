@@ -37,6 +37,11 @@ class TransformerModel(nn.Module):
         p = self.softmax(p) #Get softmax probability
         return v, p
     
+    def init_weights(self):
+        initrange = 0.1
+        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder.bias.data.zero_()
+
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, dropout=0.1, max_len=5000):
         super(PositionalEncoding, self).__init__()
