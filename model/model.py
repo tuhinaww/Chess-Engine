@@ -5,6 +5,24 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class TransformerModel(nn.Module):
+    def __init__(self, sinp, ntoken, ninp, nhead, nhid, nlayers, dropout=0.5, padding_idx=32):
+        super(TransformerModel, self).__init__()
+        from torch.nn import TransformerEncoder, TransformerEncoderLayer
+        self.model_type = 'Transformer'
+        self.pos_encoder = PositionalEncoding(ninp, dropout) #Positional encoding layer
+        encoder_layers = TransformerEncoderLayer(ninp, nhead, nhid, dropout) #Encoder layers
+        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers) #Wrap all encoder nodes (multihead)
+        self.encoder = nn.Embedding(ntoken, ninp, padding_idx=padding_idx) #Initial encoding of imputs embed layers
+        self.padding_idx = padding_idx #Index of padding token
+        self.ninp = ninp #Number of input items
+        self.softmax = nn.Softmax(dim=1) #Softmax activation layer
+        self.gelu = nn.GELU() #GELU activation layer
+        self.flatten = nn.Flatten(start_dim=1) #Flatten layer
+        self.decoder = nn.Linear(ninp,1) #Decode layer
+        self.v_output = nn.Linear(sinp,3) #Decode layer
+        self.p_output = nn.Linear(sinp,4096) #Decode layer
+        self.init_weights()
+
     def forward(self, src):
         src = self.encoder(src) * math.sqrt(self.ninp)
         src = self.pos_encoder(src)
