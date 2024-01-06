@@ -10,5 +10,6 @@ from shutil import copyfile
 import sys
 sys.path.insert(0, os.getcwd())
 from chess import Chess
+from mcts import Agent, Plumbing
 from model import TransformerModel
 
