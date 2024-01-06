@@ -9,33 +9,33 @@ class TransformerModel(nn.Module):
     def forward(self, src):
         src = self.encoder(src) * math.sqrt(self.ninp)
         src = self.pos_encoder(src)
-        output = self.transformer_encoder(src) #Encoder memory
+        output = self.transformer_encoder(src) 
         output = self.gelu(output)
-        output = self.decoder(output) #Linear layer
+        output = self.decoder(output) 
         output = self.gelu(output)
         output = self.flatten(output)
-        v = self.v_output(output) #Value output
-        v = self.softmax(v) #Get softmax probability
-        p = self.p_output(output) #Policy output
-        p = self.softmax(p) #Get softmax probability
+        v = self.v_output(output) 
+        v = self.softmax(v) 
+        p = self.p_output(output) 
+        p = self.softmax(p) 
         return v, p
     
     def __init__(self, sinp, ntoken, ninp, nhead, nhid, nlayers, dropout=0.5, padding_idx=32):
         super(TransformerModel, self).__init__()
         from torch.nn import TransformerEncoder, TransformerEncoderLayer
         self.model_type = 'Transformer'
-        self.pos_encoder = PositionalEncoding(ninp, dropout) #Positional encoding layer
-        encoder_layers = TransformerEncoderLayer(ninp, nhead, nhid, dropout) #Encoder layers
-        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers) #Wrap all encoder nodes (multihead)
-        self.encoder = nn.Embedding(ntoken, ninp, padding_idx=padding_idx) #Initial encoding of imputs embed layers
-        self.padding_idx = padding_idx #Index of padding token
-        self.ninp = ninp #Number of input items
-        self.softmax = nn.Softmax(dim=1) #Softmax activation layer
-        self.gelu = nn.GELU() #GELU activation layer
-        self.flatten = nn.Flatten(start_dim=1) #Flatten layer
-        self.decoder = nn.Linear(ninp,1) #Decode layer
-        self.v_output = nn.Linear(sinp,3) #Decode layer
-        self.p_output = nn.Linear(sinp,4096) #Decode layer
+        self.pos_encoder = PositionalEncoding(ninp, dropout) 
+        encoder_layers = TransformerEncoderLayer(ninp, nhead, nhid, dropout) 
+        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers) 
+        self.encoder = nn.Embedding(ntoken, ninp, padding_idx=padding_idx) 
+        self.padding_idx = padding_idx 
+        self.ninp = ninp 
+        self.softmax = nn.Softmax(dim=1) 
+        self.gelu = nn.GELU() 
+        self.flatten = nn.Flatten(start_dim=1) 
+        self.decoder = nn.Linear(ninp,1) 
+        self.v_output = nn.Linear(sinp,3) 
+        self.p_output = nn.Linear(sinp,4096) 
         self.init_weights()
     
     def init_weights(self):
