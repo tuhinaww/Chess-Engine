@@ -6,7 +6,7 @@ import torch
 import random
 import pandas as pd
 from copy import deepcopy
-from ai_ben.model import TransformerModel
+from model.model import TransformerModel
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 class Agent:
