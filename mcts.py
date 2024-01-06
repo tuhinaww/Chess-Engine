@@ -221,3 +221,11 @@ class Plumbing():
         else:
             result = []
         return torch.tensor([result])
+    
+    def multi_process(func, workers=None):
+        data = {}
+        with ProcessPoolExecutor(max_workers=workers) as ex:
+            future_func = {ex.submit(f['func'], *f['args']):f['name'] for f in func}
+            for future in as_completed(future_func):
+                data[future_func[future]] = future.result()
+            return data
