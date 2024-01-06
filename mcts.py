@@ -200,3 +200,24 @@ class MCTS:
                     self.tree[hash].P = p
                     return self.tree[hash].Q, self.tree[hash].P
             return self.tree[parent_hash].Q, self.tree[parent_hash].P
+
+class Plumbing():
+    def __init__(self, folder='data', filename='Token.csv'):
+        self.notation = {1:'p', 2:'n', 3:'b', 4:'r', 5:'q', 6:'k'} 
+        self.token_bank = pd.read_csv(f'{folder}/{filename}') 
+    
+    def encode_state(self, game):
+        temp_board = deepcopy(game.board)
+        for y, row in enumerate(temp_board):
+            for x, peice in enumerate(row):
+                if peice != 0:
+                    temp_board[y][x] = f'{self.notation[abs(peice)]}w' if peice > 0 else f'{self.notation[abs(peice)]}b'
+                else:
+                    temp_board[y][x] = 'PAD'
+        if len(temp_board) > 0:
+            flat = [x for y in temp_board for x in y]
+            result = [self.token_bank['token'].eq(t).idxmax() for t in flat]
+            result.insert(0, 1) if game.p_move == 1 else result.insert(0, 2)
+        else:
+            result = []
+        return torch.tensor([result])
