@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-
+from einops import rearrange
 class TransformerModel(nn.Module):
     
     def forward(self, src):
@@ -75,3 +75,35 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:x.size(0), :]
         return self.dropout(x)
+class Attention(nn.Module):
+    def __init__(self,input_size,layer_size=64,latent_size=None,heads=1,dropout=0.5,output=False):
+        super(Attention, self).__init__()
+        self.heads = heads
+        self.Q = nn.Linear(input_size,layer_size,bias=False) if latent_size is None else nn.Linear(input_size,latent_size,bias=False)
+        self.K = nn.Linear(input_size,layer_size,bias=False)
+        self.V = nn.Linear(input_size,layer_size,bias=False)
+        self.softmax = nn.Softmax(dim=-1)
+        inner_size = layer_size if latent_size is None else latent_size
+        self.output = nn.Sequential(
+            nn.Linear(inner_size,input_size,bias=False),
+            nn.Dropout(dropout)
+        )
+
+    def forward(self,x,context=None,mask=None):
+        q = rearrange(self.Q(x), 'b y (h x) -> (b h) y x', h=self.heads) 
+        if context is None:
+            k,v = map(lambda x:rearrange(x, 'b y (h x) -> (b h) y x', h=self.heads),(self.K(x),self.V(x)))
+        else:
+            k,v = map(lambda x:rearrange(x, 'b y (h x) -> (b h) y x', h=self.heads),(self.K(context),self.V(context)))
+        z = torch.einsum('b y q, b y k -> b k q', q, k) / (i.size(-1)**(0.5))
+
+        if mask is not None:
+            mask_expanded = mask.unsqueeze(1).expand_as(z)
+            z = z.masked_fill(mask_expanded, -1e18)
+            
+        z = self.softmax(z)
+        z = torch.einsum('b y z, b v y -> b v z', z, v) 
+        z = rearrange(z, '(b h) y x -> b y (h x)', h=self.heads) 
+        if output:
+            z = self.output(z)
+        return z
