@@ -61,7 +61,7 @@ class Agent:
 
 
 class MCTS:
-    def __init__(self, max_depth=5, train=False, folder='ai_ben/data', filename='model-active.pth.tar'):
+    def __init__(self, max_depth=5, train=False, folder='data', filename='model-active.pth.tar'):
         self.train = train
         self.tree = {}
         self.Cpuct = 0.77
