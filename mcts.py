@@ -19,6 +19,7 @@ class Agent:
     def choose_action(self, game):
         self.log = []
         self.MCTS.Player = game.p_move
+        print(self.MCTS.Player)
         for n in self.MCTS.tree:
             self.MCTS.tree[n].max_depth = False
         parent_hash = game.EPD_hash()
